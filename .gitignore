@@ -1,0 +1,27 @@
+# Local drafting and verification work
+/_automation_guide_work/
+/_guide_parts/
+/_learning_hub_qa/
+/learning-hub/tools/preview-home.cjs
+/learning-hub/tools/build-report.json
+
+# Downloaded dependencies and browser/build caches
+**/node_modules/
+**/.npm-cache/
+**/npm-cache/
+**/m2-cache/
+**/pw-browsers/
+**/selenium-cache/
+**/target/
+**/playwright-report/
+**/test-results/
+**/.auth/
+
+# Local settings and generated distribution files
+.env
+.env.*
+!.env.example
+*.log
+/QA-Study-Hub.zip
+Thumbs.db
+.DS_Store

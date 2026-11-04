@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Góc học JavaScript cho Performance Tester và Automation Testing: hai giáo trình chi tiết, mã nguồn tô màu và đáp án ngay dưới bài tập.">
+  <meta name="color-scheme" content="light dark">
+  <title>QA Study Hub · Hai giáo trình, một góc học tập</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="assets/app.js" defer></script>
+</head>
+<body class="home-page">
+  <a class="skip-link" href="#library">Đến danh sách giáo trình</a>
+  <header class="topbar">
+    <a class="brand" href="indexHome.html" aria-label="QA Study Hub — Trang chủ">
+      <span class="brand-mark" aria-hidden="true">{ }</span>
+      <span><span class="brand-name">QA Study Hub</span><span class="brand-caption">Góc học tập của bạn</span></span>
+    </a>
+    <div class="topbar-right">
+      <a class="topbar-link" href="#library">Thư viện giáo trình</a>
+      <button class="theme-button" type="button" data-action="theme" aria-label="Chuyển giao diện sáng hoặc tối" title="Chuyển giao diện sáng hoặc tối">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M20.5 13A8.6 8.6 0 0 1 11 3.5 8.6 8.6 0 1 0 20.5 13Z"/></svg>
+        <span class="button-label">Đổi giao diện</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="home-main" id="main-content">
+    <section class="home-intro" aria-labelledby="home-title">
+      <div>
+        <p class="eyebrow">Thư viện cá nhân / 02 giáo trình</p>
+        <h1 id="home-title">Đọc code dễ hơn.<br><span>Học test chắc hơn.</span></h1>
+        <p class="home-lead">Từ nền tảng đến cách đọc, hiểu và sửa mã kiểm thử. Chọn một giáo trình, học từng chương hoặc tra nhanh đúng phần bạn đang cần.</p>
+      </div>
+      <aside class="home-note" aria-label="Cách sử dụng thư viện">
+        <span class="note-index">LEARN · READ · PRACTICE</span>
+        <strong>Không cần học thuộc mọi câu lệnh.</strong>
+        <p>Hãy hiểu code đang làm gì, kiểm tra điều gì và biết đúng nơi cần sửa.</p>
+      </aside>
+    </section>
+
+    <section id="library" aria-labelledby="library-title">
+      <div class="library-heading">
+        <h2 id="library-title">Chọn giáo trình của bạn</h2>
+        <span>62 chương · Học theo nhịp của bạn</span>
+      </div>
+      <div class="course-grid">
+        <article class="course-card automation-card" aria-labelledby="automation-title">
+          <div class="course-card-top">
+            <div class="course-icon" aria-hidden="true"><svg width="25" height="25" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="4.5" width="21" height="18" rx="3"/><path d="M4 10h20M8 7.4h.1M11 7.4h.1M11 14l-3 3 3 3m6-6 3 3-3 3"/></svg></div>
+            <span class="course-card-number">GIÁO TRÌNH 01</span>
+          </div>
+          <h3 id="automation-title">Automation Testing</h3>
+          <p class="course-subtitle">Selenium + Java ↔ Playwright + JavaScript</p>
+          <p class="course-card-description">Đối chiếu từng thao tác trong hai cột: tìm phần tử, nhập liệu, chờ, kiểm tra kết quả và tổ chức một dự án automation.</p>
+          <div class="course-tags" aria-label="Nội dung chính"><span class="course-tag">Người mới bắt đầu</span><span class="course-tag">203 bảng đối chiếu</span><span class="course-tag">2 dự án mẫu</span></div>
+          <div class="course-card-bottom">
+            <span class="course-stats">32 chương · Lộ trình 20 buổi</span>
+            <a class="course-open" href="automation/index.html">Mở giáo trình <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+          </div>
+        </article>
+
+        <article class="course-card performance-card" aria-labelledby="performance-title">
+          <div class="course-card-top">
+            <div class="course-icon" aria-hidden="true"><svg width="25" height="25" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 23V5m0 18h20M8 19l5-7 4 3 7-10"/><path d="M19 5h5v5"/></svg></div>
+            <span class="course-card-number">GIÁO TRÌNH 02</span>
+          </div>
+          <h3 id="performance-title">JavaScript cho Performance Tester</h3>
+          <p class="course-subtitle">Ôn JavaScript · Đọc và chỉnh kịch bản k6</p>
+          <p class="course-card-description">Học lại biến, hàm và luồng chạy; phân biệt VU, iteration, RPS và biết nơi thay đổi tải, số request hay tiêu chí đánh giá.</p>
+          <div class="course-tags" aria-label="Nội dung chính"><span class="course-tag">Ôn từ căn bản</span><span class="course-tag">JavaScript + k6</span><span class="course-tag">Cấu hình tải thực tế</span></div>
+          <div class="course-card-bottom">
+            <span class="course-stats">30 chương · Lộ trình 14 buổi</span>
+            <a class="course-open" href="javascript-performance/index.html">Mở giáo trình <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="home-promise" aria-label="Đặc điểm giáo trình">
+      <span><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>Đáp án ngay dưới bài tập</span>
+      <span><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m7 5-5 5 5 5m6-10 5 5-5 5"/></svg>Mã nguồn có tô màu, xuống dòng rõ ràng</span>
+      <span><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 4h5.5c1 0 1.5.5 1.5 1.5V17c0-1-.5-1.5-1.5-1.5H3V4Zm14 0h-5.5c-1 0-1.5.5-1.5 1.5V17c0-1 .5-1.5 1.5-1.5H17V4Z"/></svg>Mục lục và tìm kiếm từng chương</span>
+    </div>
+
+    <section class="preview-panel" aria-labelledby="preview-title">
+      <div class="preview-heading"><h2 id="preview-title">Cùng một mục tiêu, hai cách viết</h2><p>Code được tách riêng khỏi lời giải thích để dễ theo dõi.</p></div>
+      <div class="home-code-grid">
+        <div class="home-code-pane">
+          <div class="home-code-label">Selenium + Java</div>
+          <pre tabindex="0" aria-label="Ví dụ Selenium Java"><code class="hljs language-java"><span class="hljs-type">String</span> email = <span class="hljs-string">"user@example.test"</span>;
+<span class="hljs-type">By</span> emailBy = By.<span class="hljs-title function_">id</span>(<span class="hljs-string">"email"</span>);
+
+driver.<span class="hljs-title function_">findElement</span>(emailBy)
+      .<span class="hljs-title function_">sendKeys</span>(email);</code></pre>
+        </div>
+        <div class="home-code-pane">
+          <div class="home-code-label">Playwright + JavaScript</div>
+          <pre tabindex="0" aria-label="Ví dụ Playwright JavaScript"><code class="hljs language-javascript"><span class="hljs-keyword">const</span> email = <span class="hljs-string">'user@example.test'</span>;
+<span class="hljs-keyword">const</span> emailField = page.<span class="hljs-title function_">getByLabel</span>(<span class="hljs-string">'Email'</span>);
+
+<span class="hljs-keyword">await</span> emailField.<span class="hljs-title function_">fill</span>(email);</code></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="home-footer"><strong>QA Study Hub</strong><span>Học từng bước. Hiểu từng dòng. Tự tin chỉnh sửa.</span></footer>
+</body>
+</html>

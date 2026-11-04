@@ -1,0 +1,10 @@
+{
+  "name": "qa-study-hub-builder",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "node build.mjs" },
+  "dependencies": {
+    "highlight.js": "11.11.1",
+    "marked": "17.0.5"
+  }
+}
