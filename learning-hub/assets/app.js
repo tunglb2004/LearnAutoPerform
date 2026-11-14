@@ -334,4 +334,48 @@
   });
   performSearch();
   activateFromHash();
+  // Video dock: ▶ chips seek one shared <video> to the matching moment.
+  const videoData = window.VIDEO_DATA;
+  const dock = $('#video-dock');
+  if (videoData && dock) {
+    const player = $('video', dock);
+    const picker = $('select', dock);
+    const resumeKey = `qa-study-video-${location.pathname}`;
+    let current = -1;
+    const open = (index, time, autoplay) => {
+      dock.hidden = false;
+      document.body.classList.add('has-video-dock');
+      picker.value = String(index);
+      const seek = () => { try { player.currentTime = time; } catch { /* metadata not ready */ } if (autoplay) player.play().catch(() => {}); };
+      if (current !== index) {
+        current = index;
+        player.src = `../${videoData.videos[index].src}`;
+        player.addEventListener('loadedmetadata', seek, { once: true });
+        player.load();
+      } else seek();
+    };
+    let lastSaved = 0;
+    player.addEventListener('timeupdate', () => {
+      if (Date.now() - lastSaved < 3000) return;
+      lastSaved = Date.now();
+      storage.set(resumeKey, JSON.stringify({ i: current, t: Math.floor(player.currentTime) }));
+    });
+    picker.addEventListener('change', () => open(Number(picker.value), 0, true));
+    document.addEventListener('click', (event) => {
+      const chip = event.target.closest('.video-chip');
+      if (chip) { open(Number(chip.dataset.video), Number(chip.dataset.time), true); return; }
+      const toggle = event.target.closest('[data-action="video-toggle"]');
+      if (toggle) {
+        if (!dock.hidden) { player.pause(); dock.hidden = true; document.body.classList.remove('has-video-dock'); return; }
+        const saved = storage.json(resumeKey, null);
+        const entry = saved && videoData.videos[saved.i] ? saved : { i: 0, t: 0 };
+        open(entry.i, entry.t, false);
+        return;
+      }
+      const button = event.target.closest('[data-dock]');
+      if (!button) return;
+      if (button.dataset.dock === 'close') { player.pause(); dock.hidden = true; document.body.classList.remove('has-video-dock'); }
+      else dock.classList.toggle('large');
+    });
+  }
 })();

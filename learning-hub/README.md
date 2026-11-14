@@ -43,3 +43,11 @@ npm --prefix learning-hub/tools run build
 ```
 
 Bạn chỉ cần `indexHome.html`, `index.html`, `assets`, `automation` và `javascript-performance` để đọc. Thư mục `tools` phục vụ việc biên soạn lại.
+
+## Video bài giảng
+
+Mỗi giáo trình có video đi kèm trong `learning-hub/videos/` (Automation: 8 video, JavaScript Performance: 5 video). Khi mở trang giáo trình, bấm nút **▶ Video** ở thanh công cụ hoặc bấm chip **▶ Video N · mm:ss** cạnh tên chương/mục để mở trình phát nổi và nhảy tới đúng thời điểm. Vị trí xem dở được nhớ theo trình duyệt.
+
+- Mốc thời gian nằm trong `learning-hub/tools/video-map.json` (mục -> video, giây) và được `node build.mjs` chèn vào HTML.
+- Mốc của mục không có đoạn riêng trong video được nội suy giữa hai mục lân cận, nên có thể lệch vài chục giây. Chương bài tập và lộ trình ôn tập chưa có video.
+- Sửa mốc trong `video-map.json` rồi chạy `npm --prefix learning-hub/tools run build`.

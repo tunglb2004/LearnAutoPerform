@@ -7,6 +7,13 @@ import hljs from 'highlight.js';
 const toolsDir = path.dirname(fileURLToPath(import.meta.url));
 const hubDir = path.resolve(toolsDir, '..');
 const workspace = path.resolve(hubDir, '..');
+const videoMap = JSON.parse(await fs.readFile(path.join(toolsDir, 'video-map.json'), 'utf8'));
+const fmtTime = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
+function videoChip(course, key) {
+  const entry = videoMap[course.id]?.map?.[key];
+  if (!entry) return '';
+  return `<button type="button" class="video-chip" data-video="${entry.v}" data-time="${entry.t}" title="Xem video ${entry.v + 1} từ phút ${fmtTime(entry.t)}"><span aria-hidden="true">▶</span> Video ${entry.v + 1} · ${fmtTime(entry.t)}</button>`;
+}
 const courses = [
   {
     id: 'automation', folder: 'automation', chaptersExpected: 32,
@@ -141,7 +148,9 @@ function renderChapter(markdown, chapter, course) {
     const isExercise = /(?:^|\.)\s*(?:Bài(?: tập| tự| đọc| thực hành)?|Tự kiểm tra|Năm câu hỏi)/i.test(title);
     const className = isExercise ? ' class="exercise-title"' : '';
     const depth = Math.max(2, token.depth);
-    return `<h${depth} id="${id}"${className}>${content}<a class="heading-anchor" href="#${id}" aria-label="Liên kết đến ${escapeHtml(title)}">#</a></h${depth}>\n`;
+    const sectionNumber = token.depth === 3 ? title.match(/^(\d+\.\d+)\b/)?.[1] : null;
+    const chip = sectionNumber ? videoChip(course, sectionNumber) : '';
+    return `<h${depth} id="${id}"${className}>${content}${chip}<a class="heading-anchor" href="#${id}" aria-label="Liên kết đến ${escapeHtml(title)}">#</a></h${depth}>\n`;
   };
   renderer.paragraph = function (token) {
     const content = this.parser.parseInline(token.tokens);
@@ -187,7 +196,7 @@ function renderChapter(markdown, chapter, course) {
   content = content.replace(/(<li(?:\s[^>]*)?>)\s*(<strong class="answer-label">[\s\S]*?)(?=<\/li>)/g, '$1<div class="answer-block">$2</div>');
   chapter.subsections = subsections;
   const kicker = chapter.number === 0 ? 'BẮT ĐẦU TỪ ĐÂY' : `CHƯƠNG ${String(chapter.number).padStart(2, '0')} / ${course.chaptersExpected}`;
-  return `<article class="chapter" id="${chapter.id}" data-title="${escapeHtml(chapter.title)}" data-chapter="${chapter.number}"${chapter.number ? ' hidden' : ''} aria-labelledby="${chapter.id}-title"><header class="chapter-heading"><p class="chapter-kicker">${kicker}</p><h2 id="${chapter.id}-title">${escapeHtml(chapter.title)}</h2></header><div class="chapter-content">${content}</div></article>`;
+  return `<article class="chapter" id="${chapter.id}" data-title="${escapeHtml(chapter.title)}" data-chapter="${chapter.number}"${chapter.number ? ' hidden' : ''} aria-labelledby="${chapter.id}-title"><header class="chapter-heading"><p class="chapter-kicker">${kicker}</p><h2 id="${chapter.id}-title">${escapeHtml(chapter.title)}</h2>${videoChip(course, String(chapter.number))}</header><div class="chapter-content">${content}</div></article>`;
 }
 
 function splitBook(markdown, course) {
@@ -211,13 +220,20 @@ function createSidebar(course, chapters) {
   return `<aside class="sidebar" id="course-sidebar" aria-label="Mục lục giáo trình"><div class="sidebar-top"><a class="back-home" href="../indexHome.html">← Trang chủ</a><p class="sidebar-course-name">${escapeHtml(course.title)}</p><label class="search-box" for="course-search"><span aria-hidden="true">⌕</span><input id="course-search" type="search" placeholder="Tìm hàm, khái niệm, bài tập…" autocomplete="off"><kbd aria-hidden="true">/</kbd></label><p id="search-count" class="search-count" aria-live="polite"></p><div id="search-results" class="search-results" hidden aria-live="polite"></div></div><nav class="chapter-nav" aria-label="Danh sách chương">${chapters.map(chapter => `${course.groups[chapter.number] ? `<p class="nav-group-label">${escapeHtml(course.groups[chapter.number])}</p>` : ''}<a class="chapter-link${chapter.number === 0 ? ' active' : ''}" data-chapter="${chapter.number}" href="#${chapter.id}"${chapter.number === 0 ? ' aria-current="page"' : ''}><span class="chapter-number">${chapter.number === 0 ? '↗' : String(chapter.number).padStart(2, '0')}</span><span class="chapter-label">${escapeHtml(chapter.title)}</span><span class="chapter-status" aria-hidden="true"></span></a>`).join('\n')}</nav><div class="sidebar-bottom"><div class="progress-meta"><span id="progress-label">0 / ${course.chaptersExpected} chương đã đọc</span></div><div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="${course.chaptersExpected}" aria-valuenow="0" aria-label="Tiến độ học"><span id="progress-fill" class="progress-fill" style="width:0%"></span></div><a class="source-link" href="source.md" download>Tải bản Markdown ↗</a></div></aside>`;
 }
 
+function videoDock(course) {
+  const info = videoMap[course.id];
+  if (!info) return '';
+  const options = info.videos.map((video, index) => `<option value="${index}">${escapeHtml(video.title)} (${fmtTime(video.dur)})</option>`).join('');
+  return `<aside class="video-dock" id="video-dock" aria-label="Trình phát video bài giảng" hidden><div class="video-dock-bar"><select aria-label="Chọn video">${options}</select><button type="button" data-dock="size" aria-label="Phóng to hoặc thu nhỏ">⤢</button><button type="button" data-dock="close" aria-label="Đóng video">✕</button></div><video controls preload="metadata" playsinline></video></aside>`;
+}
+
 function createPage(course, chapters, articles) {
   const data = { id: course.id, title: course.title, subtitle: course.subtitle, chapters: chapters.map(({ markdown, ...chapter }) => chapter) };
   const safeData = JSON.stringify(data).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
   return `<!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="description" content="${escapeHtml(course.description)}"><title>${escapeHtml(course.title)} · QA Study Hub</title><link rel="stylesheet" href="../assets/styles.css"><script>window.COURSE_DATA=${safeData};</script><script defer src="../assets/app.js"></script></head>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="description" content="${escapeHtml(course.description)}"><title>${escapeHtml(course.title)} · QA Study Hub</title><link rel="stylesheet" href="../assets/styles.css"><script>window.COURSE_DATA=${safeData};</script><script>window.VIDEO_DATA=${JSON.stringify(videoMap[course.id] ?? null).replace(/</g, '\\u003c')};</script><script defer src="../assets/app.js"></script></head>
 <body class="reader-page" data-course="${course.id}"><a class="skip-link" href="#reader-main">Đến nội dung bài học</a><header class="topbar"><div class="topbar-left"><button id="sidebar-toggle" class="sidebar-toggle icon-button" type="button" aria-label="Mở mục lục" aria-controls="course-sidebar" aria-expanded="false">☰</button><a class="brand" href="../indexHome.html"><span class="brand-mark" aria-hidden="true">Q<span>·</span></span><span>QA Study Hub<small>Ghi chép để hiểu code</small></span></a></div><div class="topbar-right"><a class="course-switch" href="${course.other}">Đổi sang ${escapeHtml(course.otherLabel)} <span aria-hidden="true">↗</span></a><button class="icon-button theme-toggle" type="button" data-action="theme" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối"><span aria-hidden="true">◐</span></button></div></header>
-<button class="sidebar-overlay" type="button" aria-label="Đóng mục lục" hidden></button><div class="reader-layout">${createSidebar(course, chapters)}<main class="reader-main" id="reader-main"><header class="course-hero"><p class="eyebrow">TỦ SÁCH THỰC HÀNH / ${course.id === 'automation' ? 'AUTOMATION' : 'PERFORMANCE'}</p><h1 class="course-title">${escapeHtml(course.title)}</h1><p class="course-description">${escapeHtml(course.description)}</p><div class="course-meta"><span>${course.chaptersExpected} chương</span><span>Đáp án ngay dưới bài tập</span><span>Đọc được ngoại tuyến</span></div></header><div class="reader-toolbar"><span class="chapter-position" id="chapter-position">Giới thiệu</span><div class="reading-controls" aria-label="Tùy chỉnh đọc"><button type="button" data-action="font-size" data-delta="-1" aria-label="Giảm cỡ chữ">A−</button><button type="button" data-action="font-size" data-delta="1" aria-label="Tăng cỡ chữ">A+</button><button type="button" data-action="print" aria-label="In giáo trình">In</button></div></div><div id="chapters">${articles.join('\n')}</div><footer class="chapter-footer"><button id="prev-chapter" class="nav-button" type="button" disabled><span aria-hidden="true">←</span> Chương trước</button><button id="mark-read" class="mark-read" type="button"><span aria-hidden="true">✓</span> Đánh dấu đã đọc</button><button id="next-chapter" class="nav-button primary" type="button">Chương tiếp <span aria-hidden="true">→</span></button></footer><p class="reader-footnote">Học từng đoạn nhỏ. Đọc code → dự đoán kết quả → đối chiếu lời giải.</p></main></div><div class="toast" id="toast" role="status" aria-live="polite" hidden></div></body></html>\n`;
+<button class="sidebar-overlay" type="button" aria-label="Đóng mục lục" hidden></button><div class="reader-layout">${createSidebar(course, chapters)}<main class="reader-main" id="reader-main"><header class="course-hero"><p class="eyebrow">TỦ SÁCH THỰC HÀNH / ${course.id === 'automation' ? 'AUTOMATION' : 'PERFORMANCE'}</p><h1 class="course-title">${escapeHtml(course.title)}</h1><p class="course-description">${escapeHtml(course.description)}</p><div class="course-meta"><span>${course.chaptersExpected} chương</span><span>Đáp án ngay dưới bài tập</span><span>Đọc được ngoại tuyến</span></div></header><div class="reader-toolbar"><span class="chapter-position" id="chapter-position">Giới thiệu</span><div class="reading-controls" aria-label="Tùy chỉnh đọc"><button type="button" data-action="video-toggle" aria-label="Mở hoặc đóng trình phát video">▶ Video</button><button type="button" data-action="font-size" data-delta="-1" aria-label="Giảm cỡ chữ">A−</button><button type="button" data-action="font-size" data-delta="1" aria-label="Tăng cỡ chữ">A+</button><button type="button" data-action="print" aria-label="In giáo trình">In</button></div></div><div id="chapters">${articles.join('\n')}</div><footer class="chapter-footer"><button id="prev-chapter" class="nav-button" type="button" disabled><span aria-hidden="true">←</span> Chương trước</button><button id="mark-read" class="mark-read" type="button"><span aria-hidden="true">✓</span> Đánh dấu đã đọc</button><button id="next-chapter" class="nav-button primary" type="button">Chương tiếp <span aria-hidden="true">→</span></button></footer><p class="reader-footnote">Học từng đoạn nhỏ. Đọc code → dự đoán kết quả → đối chiếu lời giải.</p></main></div>${videoDock(course)}<div class="toast" id="toast" role="status" aria-live="polite" hidden></div></body></html>\n`;
 }
 
 const report = [];
